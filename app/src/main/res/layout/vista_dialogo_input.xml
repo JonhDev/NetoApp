@@ -22,6 +22,8 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="10dp"
         tools:hint="Marca"
+        android:lines="1"
+        android:singleLine="true"
         app:layout_constraintTop_toBottomOf="@+id/textView_titulo"
         app:layout_constraintStart_toStartOf="parent"/>
 

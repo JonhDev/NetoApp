@@ -24,6 +24,7 @@ import com.example.lista0404.database.RefaccionariaHelper;
 import com.example.lista0404.datos.Modelo;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Hashtable;
 import java.util.List;
@@ -75,24 +76,33 @@ public class ModelosFragment extends Fragment {
         mAdapter = new ModelosAdapter(listaModelos);
         modeloRecycler.setAdapter(mAdapter);
     }
+    private static int seleccion = 0;
 
     private void agregarModelo() {
-        String[] marcasLista = Collections.list(marcas.elements()).toArray(String[]::new);
+        LayoutInflater li = LayoutInflater.from(getContext());
+        View vista = li.inflate(R.layout.vista_dialogo_input, null);
+        Object[] lista = Collections.list(marcas.elements()).toArray();
+        String[] marcasLista = Arrays.copyOf(lista, lista.length, String[].class);
         AlertDialog.Builder alertDialog = new AlertDialog.Builder(getContext());
-        alertDialog.setTitle("Ingresa una marca");
-        alertDialog.setSingleChoiceItems(marcasLista, new DialogInterface.OnClickListener(){
+        final EditText input = vista.findViewById(R.id.editText_input);
+        final TextView titulo = vista.findViewById(R.id.textView_titulo);
+        titulo.setText("Nombre del modelo");
+        alertDialog.setTitle("Selecciona una marca");
+        alertDialog.setSingleChoiceItems(marcasLista, -1, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
-
+                seleccion = Collections.list(marcas.keys()).get(i);
             }
         });
+        alertDialog.setView(vista);
         alertDialog.setCancelable(true)
                 .setPositiveButton("Guardar", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
                         if(!input.getText().toString().isEmpty()) {
-                            guardarMarcaEnBD(input.getText().toString());
+                            refaccionaria.insertarModelo(input.getText().toString(), seleccion);
                             dialogInterface.dismiss();
+                            iniciarModelos();
                         }
                     }
                 })
@@ -125,7 +135,7 @@ public class ModelosFragment extends Fragment {
         public ModelosAdapter.ViewHolder onCreateViewHolder(ViewGroup parent,
                                                                           int viewType) {
             View view = LayoutInflater.from(parent.getContext())
-                    .inflate(R.layout.item_marcas, parent, false);
+                    .inflate(R.layout.vista_modelo, parent, false);
             modelo = view.findViewById(R.id.textView_modelo);
             marca = view.findViewById(R.id.textView_marca);
             delete = view.findViewById(R.id.delete_item);

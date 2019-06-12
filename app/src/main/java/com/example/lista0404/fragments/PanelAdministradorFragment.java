@@ -48,7 +48,13 @@ public class PanelAdministradorFragment extends Fragment {
         refacciones.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //Navegar a refacciones
+                try {
+                    FragmentTransaction transaction = getActivity().getSupportFragmentManager().beginTransaction();
+                    transaction.setCustomAnimations(android.R.anim.slide_in_left, android.R.anim.slide_out_right);
+                    transaction.add(R.id.frame_base, new RefaccionesFragment(), "Refacciones").addToBackStack("Refacciones").commit();
+                } catch (Exception e) {
+                    Toast.makeText(getContext(), "ERROR: " + e.getMessage(), Toast.LENGTH_LONG).show();
+                }
             }
         });
 

@@ -7,11 +7,10 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
 import com.example.lista0404.datos.Modelo;
+import com.example.lista0404.datos.Refaccion;
 
 import java.util.ArrayList;
-import java.util.Dictionary;
 import java.util.Hashtable;
-import java.util.List;
 
 public class RefaccionariaHelper extends SQLiteOpenHelper {
 
@@ -64,7 +63,9 @@ public class RefaccionariaHelper extends SQLiteOpenHelper {
     private static final String OBTENER_ADMINITRADORES = "select * from Administrador" ;
     private static final String OBTENER_USUARIOS = "select * from Cliente";
     private static final String OBTENER_MARCAS = "select * from Marca";
+    private static final String OBTENER_TIPOS = "select * from TipoDeRefaccion";
     private static final String OBTENER_MODELO = "select * from Modelo";
+    private static final String OBTENER_REFACCIONES = "select * from Refacciones";
 
     public RefaccionariaHelper(Context context) {
         super(context, DATABASE_NAME, null, DB_VERSION);
@@ -158,6 +159,16 @@ public class RefaccionariaHelper extends SQLiteOpenHelper {
         db.insert("TipoDeRefaccion", null, values);
     }
 
+    public Hashtable<Integer, String> obtenerTipos() {
+        Hashtable<Integer, String> tipos = new Hashtable<Integer, String>();
+        SQLiteDatabase db = getWritableDatabase();
+        Cursor cursor = db.rawQuery(OBTENER_TIPOS, null);
+        while (cursor.moveToNext()) {
+            tipos.put(cursor.getInt(0), cursor.getString(1));
+        }
+        return tipos;
+    }
+
     public void insertarModelo(String nombreModelo, int marcaModelo) {
         SQLiteDatabase db = getWritableDatabase();
         ContentValues values = new ContentValues();
@@ -190,5 +201,27 @@ public class RefaccionariaHelper extends SQLiteOpenHelper {
         values.put("precio", precio);
         values.put("refaccionModelo", modelo);
         db.insert("Refacciones", null, values);
+    }
+
+    public ArrayList<Refaccion> obtenerRefacciones() {
+        ArrayList<Refaccion> refacciones = new ArrayList<>();
+        SQLiteDatabase db = getWritableDatabase();
+        Cursor cursor = db.rawQuery(OBTENER_REFACCIONES, null);
+        while (cursor.moveToNext()) {
+            refacciones.add(new Refaccion(
+                    cursor.getInt(0),
+                    cursor.getString(1),
+                    cursor.getInt(2),
+                    cursor.getString(3),
+                    cursor.getDouble(4),
+                    cursor.getInt(5))
+            );
+        }
+        return refacciones;
+    }
+
+    public void eliminarRefaccion(int id) {
+        SQLiteDatabase db = getWritableDatabase();
+        db.execSQL("DELETE FROM Refacciones WHERE idRefaccion = " + id);
     }
 }
