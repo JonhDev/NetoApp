@@ -7,7 +7,6 @@ import android.os.Bundle;
 
 import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentTransaction;
 
 import android.view.LayoutInflater;
 import android.view.View;
@@ -41,6 +40,12 @@ public class RefaccionariaFormFragment extends Fragment {
     private static int tipoSeleccionado = -1;
     private static int modeloSeleccionado = -1;
 
+    private Callback callback = null;
+
+    public void colocarCallback(Callback callback) {
+        this.callback = callback;
+    }
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -69,6 +74,9 @@ public class RefaccionariaFormFragment extends Fragment {
             @Override
             public void onClick(View view) {
                 guardarRefaccion();
+                if(callback != null) {
+                    callback.refaccionGuardada();
+                }
             }
         });
 
@@ -96,12 +104,23 @@ public class RefaccionariaFormFragment extends Fragment {
         return vista;
     }
 
+    private void reiniciar() {
+        nombre.setText("");
+        descripcion.setText("");
+        precio.setText("");
+        tipo.setText("");
+        modelo.setText("");
+        tipoSeleccionado = -1;
+        modeloSeleccionado = -1;
+    }
+
     private void guardarRefaccion() {
         if(tipoSeleccionado != -1 && modeloSeleccionado != -1) {
             String nombreRefa = nombre.getText().toString();
             String descripcionRefa = descripcion.getText().toString();
             double precioRefa = Double.parseDouble(precio.getText().toString());
             refaccionaria.insertarRefaccion(nombreRefa, tipoSeleccionado, descripcionRefa, precioRefa, modeloSeleccionado);
+            reiniciar();
             getActivity().onBackPressed();
         } else {
             Toast.makeText(getContext(), "Ingresa todos los datos", Toast.LENGTH_LONG).show();
@@ -199,4 +218,7 @@ public class RefaccionariaFormFragment extends Fragment {
         return array;
     }
 
+    interface Callback {
+        void refaccionGuardada();
+    }
 }

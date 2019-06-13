@@ -11,6 +11,7 @@ import android.widget.RadioButton;
 import android.widget.Toast;
 
 import com.example.lista0404.activities.AdministradorActivity;
+import com.example.lista0404.activities.UsuarioActivity;
 import com.example.lista0404.database.RefaccionariaHelper;
 
 public class RefaccionariaNeto extends AppCompatActivity {
@@ -73,7 +74,7 @@ public class RefaccionariaNeto extends AppCompatActivity {
         String usuario = EditTextUsuario.getText().toString();
         String contrasena = EditTextContraseña.getText().toString();
         if(refaccionaria.loginUsuario(usuario, contrasena)) {
-            navegarAAdministrador();
+            navegarAUsuario();
         } else {
             Toast.makeText(getApplicationContext(), "No se puede ingresar", Toast.LENGTH_LONG).show();
         }
@@ -103,6 +104,11 @@ public class RefaccionariaNeto extends AppCompatActivity {
 
     private void navegarAAdministrador() {
         Intent llamarAgregar = new Intent(getApplicationContext(), AdministradorActivity.class);
+        startActivity(llamarAgregar);
+    }
+
+    private void navegarAUsuario() {
+        Intent llamarAgregar = new Intent(getApplicationContext(), UsuarioActivity.class);
         startActivity(llamarAgregar);
     }
 

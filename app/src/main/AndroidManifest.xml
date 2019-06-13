@@ -11,7 +11,8 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.AppCompat.Light.NoActionBar">
-        <activity android:name=".activities.AdministradorActivity"></activity>
+        <activity android:name=".activities.UsuarioActivity"></activity>
+        <activity android:name=".activities.AdministradorActivity" />
         <activity android:name=".AgregarCampo" />
         <activity android:name=".PruebaArticulos" />
         <activity android:name=".AgregarArticulo" />

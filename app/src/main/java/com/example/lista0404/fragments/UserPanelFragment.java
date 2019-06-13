@@ -6,6 +6,7 @@ import android.os.Bundle;
 import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
+import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -25,7 +26,7 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import java.util.ArrayList;
 import java.util.Hashtable;
 
-public class RefaccionesFragment extends Fragment implements RefaccionariaFormFragment.Callback {
+public class UserPanelFragment extends Fragment {
 
     private RecyclerView modeloRecycler;
     private RecyclerView.Adapter mAdapter;
@@ -37,13 +38,12 @@ public class RefaccionesFragment extends Fragment implements RefaccionariaFormFr
     private ArrayList<Modelo> modelos;
 
     RefaccionariaHelper refaccionaria;
-    RefaccionariaFormFragment fragment = new RefaccionariaFormFragment();
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View vista = inflater.inflate(R.layout.fragment_refacciones, container, false);
+        View vista = inflater.inflate(R.layout.fragment_user_panel, container, false);
         modeloRecycler = vista.findViewById(R.id.recyclerView);
         floatingActionButton = vista.findViewById(R.id.floating_add);
         toolbar = vista.findViewById(R.id.toolbar);
@@ -53,17 +53,10 @@ public class RefaccionesFragment extends Fragment implements RefaccionariaFormFr
                 getActivity().onBackPressed();
             }
         });
-        fragment.colocarCallback(this);
         floatingActionButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                try {
-                    FragmentTransaction transaction = getActivity().getSupportFragmentManager().beginTransaction();
-                    transaction.setCustomAnimations(android.R.anim.slide_in_left, android.R.anim.slide_out_right);
-                    transaction.add(R.id.frame_base, fragment, "RefaccionesForm").addToBackStack("RefaccionesForm").commit();
-                } catch (Exception e) {
-                    Toast.makeText(getContext(), "ERROR: " + e.getMessage(), Toast.LENGTH_LONG).show();
-                }
+
             }
         });
         modeloRecycler.setHasFixedSize(true);
@@ -81,6 +74,7 @@ public class RefaccionesFragment extends Fragment implements RefaccionariaFormFr
     private void iniciarRefacciones() {
         ArrayList<Refaccion> refaccionesLista = refaccionaria.obtenerRefacciones();
         mAdapter = new RefaccionesAdapter(refaccionesLista);
+        modeloRecycler.addItemDecoration(new DividerItemDecoration(getActivity(), LinearLayoutManager.VERTICAL));
         modeloRecycler.setAdapter(mAdapter);
     }
 
@@ -90,16 +84,9 @@ public class RefaccionesFragment extends Fragment implements RefaccionariaFormFr
         iniciarRefacciones();
     }
 
-    @Override
-    public void refaccionGuardada() {
-        tipos = refaccionaria.obtenerTipos();
-        iniciarRefacciones();
-    }
-
     class RefaccionesAdapter extends RecyclerView.Adapter<RefaccionesAdapter.ViewHolder> {
         private ArrayList<Refaccion> mDataset;
         private TextView nombre, descripcion, modelo, tipo, precio;
-        private ImageView delete;
 
         public class ViewHolder extends RecyclerView.ViewHolder {
             public ViewHolder(View v) {
@@ -113,15 +100,14 @@ public class RefaccionesFragment extends Fragment implements RefaccionariaFormFr
 
         @Override
         public RefaccionesAdapter.ViewHolder onCreateViewHolder(ViewGroup parent,
-                                                                            int viewType) {
+                                                                                    int viewType) {
             View view = LayoutInflater.from(parent.getContext())
-                    .inflate(R.layout.vista_refaccion, parent, false);
+                    .inflate(R.layout.vista_refaccion_usuario, parent, false);
             nombre = view.findViewById(R.id.textView_nombre);
             descripcion = view.findViewById(R.id.textView_descripcion);
             modelo = view.findViewById(R.id.textView_modelo);
             tipo = view.findViewById(R.id.textView_tipo);
             precio = view.findViewById(R.id.textView_precio);
-            delete = view.findViewById(R.id.delete_item);
             return new RefaccionesAdapter.ViewHolder(view);
         }
 
@@ -132,14 +118,6 @@ public class RefaccionesFragment extends Fragment implements RefaccionariaFormFr
             modelo.setText(obtenerNombreModelo(mDataset.get(position).getMarcaModelo()));
             tipo.setText("Tipo: " + tipos.get(mDataset.get(position).getTipo()));
             precio.setText(mDataset.get(position).getPrecio() + "");
-            delete.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    RefaccionariaHelper refaccionaria = new RefaccionariaHelper(view.getContext());
-                    refaccionaria.eliminarRefaccion(mDataset.get(position).getIdRefaccion());
-                    iniciarRefacciones();
-                }
-            });
         }
 
         private String obtenerNombreModelo(int index) {

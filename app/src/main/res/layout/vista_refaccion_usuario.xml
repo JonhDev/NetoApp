@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical"
+    android:padding="5dp"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <TextView
+        android:id="@+id/textView_nombre"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textStyle="bold"
+        android:textSize="22dp"
+        tools:text="Refaccion 1"/>
+    <TextView
+        android:id="@+id/textView_descripcion"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textSize="15dp"
+        tools:text="Esta es una descripcion de la refaccion que esta justamente aqui arriba, y solo es de prueba"/>
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <TextView
+            android:id="@+id/textView_modelo"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:textStyle="bold"
+            android:textSize="16dp"
+            tools:text="Modelo"/>
+        <TextView
+            android:id="@+id/textView_tipo"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:textStyle="bold"
+            android:textSize="16dp"
+            tools:text="Tipo"/>
+
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/textView_precio"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textStyle="bold"
+        android:gravity="end"
+        android:textColor="@android:color/holo_green_dark"
+        android:textSize="18dp"
+        tools:text="$10,500.00"/>
+
+    <Button
+        android:id="@+id/boton_agregar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@android:color/holo_green_dark"
+        android:textAllCaps="false"
+        android:layout_marginTop="15dp"
+        android:layout_marginBottom="15dp"
+        android:textColor="@color/White"
+        android:textStyle="bold"
+        android:textSize="16dp"
+        android:text="Agregar al carrito"/>
+
+</LinearLayout>
