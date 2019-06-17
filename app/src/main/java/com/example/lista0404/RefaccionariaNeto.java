@@ -73,8 +73,9 @@ public class RefaccionariaNeto extends AppCompatActivity {
     private void ingresarUsuario() {
         String usuario = EditTextUsuario.getText().toString();
         String contrasena = EditTextContraseña.getText().toString();
-        if(refaccionaria.loginUsuario(usuario, contrasena)) {
-            navegarAUsuario();
+        int usuarioId = refaccionaria.loginUsuario(usuario, contrasena);
+        if(usuarioId > -1) {
+            navegarAUsuario(usuarioId);
         } else {
             Toast.makeText(getApplicationContext(), "No se puede ingresar", Toast.LENGTH_LONG).show();
         }
@@ -107,8 +108,9 @@ public class RefaccionariaNeto extends AppCompatActivity {
         startActivity(llamarAgregar);
     }
 
-    private void navegarAUsuario() {
+    private void navegarAUsuario(int idUsuario) {
         Intent llamarAgregar = new Intent(getApplicationContext(), UsuarioActivity.class);
+        llamarAgregar.putExtra("id_usuario", idUsuario);
         startActivity(llamarAgregar);
     }
 

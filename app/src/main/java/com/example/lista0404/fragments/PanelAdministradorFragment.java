@@ -14,7 +14,7 @@ import com.example.lista0404.R;
 
 public class PanelAdministradorFragment extends Fragment {
 
-    CardView modelos, refacciones, marcas;
+    CardView modelos, refacciones, marcas, compras;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -29,6 +29,7 @@ public class PanelAdministradorFragment extends Fragment {
         modelos = vista.findViewById(R.id.card_modelos);
         refacciones = vista.findViewById(R.id.card_refacciones);
         marcas = vista.findViewById(R.id.card_marcas);
+        compras = vista.findViewById(R.id.card_compras);
     }
 
     private void iniciarListeners() {
@@ -65,6 +66,19 @@ public class PanelAdministradorFragment extends Fragment {
                     FragmentTransaction transaction = getActivity().getSupportFragmentManager().beginTransaction();
                     transaction.setCustomAnimations(android.R.anim.slide_in_left, android.R.anim.slide_out_right);
                     transaction.add(R.id.frame_base, new MarcasFragment(), "Marcas").addToBackStack("Marcas").commit();
+                } catch (Exception e) {
+                    Toast.makeText(getContext(), "ERROR: " + e.getMessage(), Toast.LENGTH_LONG).show();
+                }
+            }
+        });
+
+        compras.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                try {
+                    FragmentTransaction transaction = getActivity().getSupportFragmentManager().beginTransaction();
+                    transaction.setCustomAnimations(android.R.anim.slide_in_left, android.R.anim.slide_out_right);
+                    transaction.add(R.id.frame_base, new ComprasFragment(), "Marcas").addToBackStack("Marcas").commit();
                 } catch (Exception e) {
                     Toast.makeText(getContext(), "ERROR: " + e.getMessage(), Toast.LENGTH_LONG).show();
                 }

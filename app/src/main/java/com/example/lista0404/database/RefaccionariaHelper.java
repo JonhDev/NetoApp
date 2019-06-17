@@ -6,16 +6,18 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
+import com.example.lista0404.datos.Carrito;
 import com.example.lista0404.datos.Modelo;
 import com.example.lista0404.datos.Refaccion;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.Hashtable;
 
 public class RefaccionariaHelper extends SQLiteOpenHelper {
 
     private static final String DATABASE_NAME = "refaccionaria_db";
-    private static final int DB_VERSION = 2;
+    private static final int DB_VERSION = 3;
 
     //Tablas
     private static final String TABLA_MARCA = "create table if not exists Marca(" +
@@ -57,6 +59,7 @@ public class RefaccionariaHelper extends SQLiteOpenHelper {
             "carritoCliente integer," +
             "carritoRefaccion integer," +
             "fecha varchar(50)," +
+            "fueComprado integer," +
             "FOREIGN KEY(carritoCliente) REFERENCES Cliente(idCliente) on delete cascade," +
             "FOREIGN KEY(carritoRefaccion) REFERENCES Refacciones(idRefaccion) on delete cascade)";
 
@@ -66,6 +69,7 @@ public class RefaccionariaHelper extends SQLiteOpenHelper {
     private static final String OBTENER_TIPOS = "select * from TipoDeRefaccion";
     private static final String OBTENER_MODELO = "select * from Modelo";
     private static final String OBTENER_REFACCIONES = "select * from Refacciones";
+    private static final String OBTENER_CARRITO = "select * from Carrito";
 
     public RefaccionariaHelper(Context context) {
         super(context, DATABASE_NAME, null, DB_VERSION);
@@ -139,17 +143,28 @@ public class RefaccionariaHelper extends SQLiteOpenHelper {
         db.insert("Cliente", null, values);
     }
 
-    public boolean loginUsuario(String nombre, String contrasena) {
+    public int loginUsuario(String nombre, String contrasena) {
         try {
             SQLiteDatabase db = getWritableDatabase();
             Cursor cursor = db.rawQuery(OBTENER_USUARIOS + " where nombre = '" + nombre + "'", null);
             cursor.moveToFirst();
             String usuario = cursor.getString(1);
             String contrasenaDb = cursor.getString(2);
-            return usuario.equals(nombre) && contrasena.equals(contrasenaDb);
+            if (usuario.equals(nombre) && contrasena.equals(contrasenaDb)) {
+                return cursor.getInt(0);
+            } else {
+                return -1;
+            }
         } catch (Exception e) {
-            return false;
+            return -1;
         }
+    }
+
+    public String nombreUsuario(int id) {
+        SQLiteDatabase db = getWritableDatabase();
+        Cursor cursor = db.rawQuery(OBTENER_USUARIOS + " where idCliente = " + id, null);
+        cursor.moveToFirst();
+        return cursor.getString(1);
     }
 
     public void insertarTipoRefaccion(String tipoDeRefaccion) {
@@ -175,6 +190,48 @@ public class RefaccionariaHelper extends SQLiteOpenHelper {
         values.put("nombreModelo", nombreModelo);
         values.put("marcaModelo", marcaModelo);
         db.insert("Modelo", null, values);
+    }
+
+    public ArrayList<Carrito> obtenerCarritoUsuario(int usuarioId) {
+        ArrayList<Carrito> modelos = new ArrayList<>();
+        SQLiteDatabase db = getWritableDatabase();
+        Cursor cursor = db.rawQuery(OBTENER_CARRITO + " where carritoCliente = " +usuarioId + " and  fueComprado = 0" , null);
+        while (cursor.moveToNext()) {
+            modelos.add(new Carrito(
+                    cursor.getInt(0),
+                    cursor.getInt(1),
+                    cursor.getInt(2),
+                    cursor.getString(3),
+                    cursor.getInt(4)
+            ));
+        }
+        return modelos;
+    }
+
+    public ArrayList<Carrito> obtenerCompras() {
+        ArrayList<Carrito> modelos = new ArrayList<>();
+        SQLiteDatabase db = getWritableDatabase();
+        Cursor cursor = db.rawQuery(OBTENER_CARRITO + " where fueComprado > 0" , null);
+        while (cursor.moveToNext()) {
+            modelos.add(new Carrito(
+                    cursor.getInt(0),
+                    cursor.getInt(1),
+                    cursor.getInt(2),
+                    cursor.getString(3),
+                    cursor.getInt(4)
+            ));
+        }
+        return modelos;
+    }
+
+    public void insertarAlCarrito(int usuarioId, int refaccionId) {
+        SQLiteDatabase db = getWritableDatabase();
+        ContentValues values = new ContentValues();
+        values.put("carritoCliente", usuarioId);
+        values.put("carritoRefaccion", refaccionId);
+        values.put("fecha", new Date().toString());
+        values.put("fueComprado", 0);
+        db.insert("Carrito", null, values);
     }
 
     public ArrayList<Modelo> obtenerModelos() {
@@ -203,6 +260,13 @@ public class RefaccionariaHelper extends SQLiteOpenHelper {
         db.insert("Refacciones", null, values);
     }
 
+    public void actualizarAComprado(int compraId) {
+        SQLiteDatabase db = getWritableDatabase();
+        ContentValues values = new ContentValues();
+        values.put("fueComprado", 1);
+        db.update("Carrito", values, "idCarrito = " + compraId, null);
+    }
+
     public ArrayList<Refaccion> obtenerRefacciones() {
         ArrayList<Refaccion> refacciones = new ArrayList<>();
         SQLiteDatabase db = getWritableDatabase();
@@ -223,5 +287,10 @@ public class RefaccionariaHelper extends SQLiteOpenHelper {
     public void eliminarRefaccion(int id) {
         SQLiteDatabase db = getWritableDatabase();
         db.execSQL("DELETE FROM Refacciones WHERE idRefaccion = " + id);
+    }
+
+    public void eliminarRefaccionDeCarrito(int id) {
+        SQLiteDatabase db = getWritableDatabase();
+        db.execSQL("DELETE FROM Carrito WHERE idCarrito = " + id);
     }
 }
